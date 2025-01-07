@@ -1,13 +1,12 @@
 package com.whatstheplan.reviews;
 
+import com.whatstheplan.reviews.testconfig.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ReviewsApplicationTests {
+class ReviewsApplicationTests extends BaseIntegrationTest {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
