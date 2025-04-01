@@ -29,4 +29,13 @@ public class AssertionsUtils {
         assertThat(response.getText()).isEqualTo(request.getText());
         assertThat(response.getIsOwnedByUser()).isEqualTo(isOwned);
     }
+
+    public static void assertReviewResponse(Review review, ReviewResponse response, boolean isOwned) {
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getUsername()).isEqualTo(""); //TODO
+        assertThat(response.getRaterUsername()).isEqualTo(""); //TODO
+        assertThat(response.getRating()).isEqualTo(review.getRating());
+        assertThat(response.getText()).isEqualTo(review.getText());
+        assertThat(response.getIsOwnedByUser()).isEqualTo(isOwned);
+    }
 }

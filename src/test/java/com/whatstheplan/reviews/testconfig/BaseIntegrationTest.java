@@ -27,8 +27,7 @@ public class BaseIntegrationTest {
     protected ObjectMapper objectMapper;
 
     protected static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor JWT_TOKEN = jwt()
-            .jwt(jwt -> jwt
-                    .claim("sub", RATER_ID))
+            .jwt(jwt -> jwt.claim("sub", RATER_ID))
             .authorities(new SimpleGrantedAuthority("ROLE_user"));
 
     @BeforeEach

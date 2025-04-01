@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
@@ -20,7 +21,7 @@ public class ReviewControllerAdvice {
     public ResponseEntity<ErrorResponse> handleReviewNotExists(ReviewNotExistsException ex) {
         log.warn("Review not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ErrorResponse("Review not found.")
+                new ErrorResponse("Review not found")
         );
     }
 
@@ -47,6 +48,14 @@ public class ReviewControllerAdvice {
                 new ErrorResponse(String.join(" ", ex.getBindingResult().getFieldErrors().stream()
                         .map(FieldError::getDefaultMessage)
                         .toList()))
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentTypeMismatchException ex) {
+        log.warn("Request validation error occurred: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse(ex.getCause().getMessage())
         );
     }
 

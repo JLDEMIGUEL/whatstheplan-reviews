@@ -1,5 +1,6 @@
 package com.whatstheplan.reviews.testconfig.utils;
 
+import com.whatstheplan.reviews.model.entity.Review;
 import com.whatstheplan.reviews.model.request.ReviewRequest;
 import lombok.experimental.UtilityClass;
 
@@ -20,9 +21,11 @@ public class DataUtils {
                 .build();
     }
 
-    public static ReviewRequest generateReviewEntity() {
-        return ReviewRequest.builder()
+    public static Review generateReviewEntity(UUID raterId) {
+        return Review.builder()
+                .id(UUID.randomUUID())
                 .userId(USER_ID)
+                .raterId(raterId)
                 .rating(5)
                 .text("Great event!")
                 .build();
