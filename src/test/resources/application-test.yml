@@ -10,3 +10,6 @@ de:
     mongodb:
       embedded:
         version: 7.0.0
+
+user-service:
+  url: http://localhost:8090

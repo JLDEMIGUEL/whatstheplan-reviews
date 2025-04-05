@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.whatstheplan.reviews.testconfig.utils.AssertionsUtils.assertReviewResponse;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.OTHER_RATER_ID;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.OTHER_RATER_USERNAME;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_ID;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_USERNAME;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.USER_ID;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.generateReviewEntity;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +48,7 @@ class ReviewRetrievalByUserIntegrationTest extends BaseIntegrationTest {
         // given
         Review entity1 = reviewRepository.save(generateReviewEntity(RATER_ID));
         Review entity2 = reviewRepository.save(generateReviewEntity(RATER_ID));
-        Review entity3 = reviewRepository.save(generateReviewEntity(UUID.randomUUID()));
+        Review entity3 = reviewRepository.save(generateReviewEntity(OTHER_RATER_ID));
 
         // when
         MvcResult result = mockMvc.perform(get("/reviews/user/{userId}", USER_ID)
@@ -59,9 +62,9 @@ class ReviewRetrievalByUserIntegrationTest extends BaseIntegrationTest {
                 objectMapper.getTypeFactory().constructCollectionType(List.class, ReviewResponse.class));
 
         assertThat(responses).hasSize(3);
-        assertReviewResponse(entity1, responses.get(0), true);
-        assertReviewResponse(entity2, responses.get(1), true);
-        assertReviewResponse(entity3, responses.get(2), false);
+        assertReviewResponse(entity1, responses.get(0), true, RATER_USERNAME);
+        assertReviewResponse(entity2, responses.get(1), true, RATER_USERNAME);
+        assertReviewResponse(entity3, responses.get(2), false, OTHER_RATER_USERNAME);
     }
 
     @Test

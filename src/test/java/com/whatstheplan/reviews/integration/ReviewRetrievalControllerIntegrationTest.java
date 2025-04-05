@@ -14,7 +14,10 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.whatstheplan.reviews.testconfig.utils.AssertionsUtils.assertReviewResponse;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.OTHER_RATER_ID;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.OTHER_RATER_USERNAME;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_ID;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_USERNAME;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.generateReviewEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +28,7 @@ class ReviewRetrievalControllerIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("provideTestValues")
-    void whenRetrievingExistingReviewById_thenShouldReturnReviewSuccessfully(UUID raterId, boolean isOwned) throws Exception {
+    void whenRetrievingExistingReviewById_thenShouldReturnReviewSuccessfully(UUID raterId, String username, boolean isOwned) throws Exception {
         // given
         Review review = reviewRepository.save(generateReviewEntity(raterId));
 
@@ -38,7 +41,7 @@ class ReviewRetrievalControllerIntegrationTest extends BaseIntegrationTest {
 
         // then
         ReviewResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ReviewResponse.class);
-        assertReviewResponse(review, response, isOwned);
+        assertReviewResponse(review, response, isOwned, username);
     }
 
     @Test
@@ -91,8 +94,8 @@ class ReviewRetrievalControllerIntegrationTest extends BaseIntegrationTest {
 
     public static Stream<Arguments> provideTestValues() {
         return Stream.of(
-                Arguments.of(RATER_ID, true),
-                Arguments.of(UUID.randomUUID(), false)
+                Arguments.of(RATER_ID, RATER_USERNAME, true),
+                Arguments.of(OTHER_RATER_ID, OTHER_RATER_USERNAME, false)
         );
     }
 }

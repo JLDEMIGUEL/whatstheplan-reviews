@@ -1,5 +1,6 @@
 package com.whatstheplan.reviews.service;
 
+import com.whatstheplan.reviews.client.user.UserClient;
 import com.whatstheplan.reviews.exceptions.ReviewNotExistsException;
 import com.whatstheplan.reviews.exceptions.ReviewRaterMismatchException;
 import com.whatstheplan.reviews.model.entity.Review;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+
+    private final UserClient userClient;
 
     public ReviewResponse createReview(ReviewRequest request) {
         log.info("Saving new review: {}", request);
@@ -55,6 +58,10 @@ public class ReviewService {
     }
 
     private ReviewResponse generateReviewResponse(Review review) {
-        return ReviewResponse.from(review, "", "");//TODO
+        return ReviewResponse.from(
+                review,
+                userClient.getUserBasicInfo(review.getRaterId()).getUsername(),
+                userClient.getUserBasicInfo(review.getUserId()).getUsername()
+        );
     }
 }
