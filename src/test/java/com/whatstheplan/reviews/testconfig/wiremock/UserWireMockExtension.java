@@ -21,8 +21,6 @@ public class UserWireMockExtension extends WireMockExtension {
 
     public void stubForUser(UUID userId, String username) {
         BasicUserResponse response = generateBasicUserResponse(username);
-
-        System.err.println("MOCKING USERID: " + userId + " , username: " + username);
         stubFor(get(urlEqualTo("/users-info/" + userId))
                 .willReturn(okForJson(response)));
     }

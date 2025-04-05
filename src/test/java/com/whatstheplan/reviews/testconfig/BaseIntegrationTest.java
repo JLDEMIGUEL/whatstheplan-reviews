@@ -2,6 +2,7 @@ package com.whatstheplan.reviews.testconfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whatstheplan.reviews.repository.ReviewRepository;
+import com.whatstheplan.reviews.testconfig.wiremock.AuthWireMockExtension;
 import com.whatstheplan.reviews.testconfig.wiremock.UserWireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -35,6 +36,8 @@ public class BaseIntegrationTest {
 
     @RegisterExtension
     protected static UserWireMockExtension userWireMockExtension = new UserWireMockExtension();
+    @RegisterExtension
+    protected static AuthWireMockExtension authWireMockExtension = new AuthWireMockExtension();
 
     protected static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor JWT_TOKEN = jwt()
             .jwt(jwt -> jwt.claim("sub", RATER_ID))
@@ -43,6 +46,7 @@ public class BaseIntegrationTest {
     @BeforeEach
     void setUp() {
         reviewRepository.deleteAll();
+        authWireMockExtension.stubForToken();
         userWireMockExtension.stubForUser(USER_ID, USERNAME);
         userWireMockExtension.stubForUser(RATER_ID, RATER_USERNAME);
         userWireMockExtension.stubForUser(OTHER_RATER_ID, OTHER_RATER_USERNAME);
