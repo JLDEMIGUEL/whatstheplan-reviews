@@ -22,6 +22,7 @@ import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_ID;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_USERNAME;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.USER_ID;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.generateReviewEntity;
+import static java.util.Collections.reverseOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,7 +48,9 @@ class ReviewRetrievalByUserIntegrationTest extends BaseIntegrationTest {
     void whenRetrievingReviewsByUserId_thenShouldReturnReviews() throws Exception {
         // given
         Review entity1 = reviewRepository.save(generateReviewEntity(RATER_ID));
+        Thread.sleep(10);
         Review entity2 = reviewRepository.save(generateReviewEntity(RATER_ID));
+        Thread.sleep(10);
         Review entity3 = reviewRepository.save(generateReviewEntity(OTHER_RATER_ID));
 
         // when
@@ -61,10 +64,14 @@ class ReviewRetrievalByUserIntegrationTest extends BaseIntegrationTest {
         List<ReviewResponse> responses = objectMapper.readValue(result.getResponse().getContentAsString(),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, ReviewResponse.class));
 
+        assertThat(responses)
+                .extracting(ReviewResponse::getCreatedAt)
+                .isSortedAccordingTo(reverseOrder());
+
         assertThat(responses).hasSize(3);
-        assertReviewResponse(entity1, responses.get(0), true, RATER_USERNAME);
+        assertReviewResponse(entity3, responses.get(0), false, OTHER_RATER_USERNAME);
         assertReviewResponse(entity2, responses.get(1), true, RATER_USERNAME);
-        assertReviewResponse(entity3, responses.get(2), false, OTHER_RATER_USERNAME);
+        assertReviewResponse(entity1, responses.get(2), true, RATER_USERNAME);
     }
 
     @Test

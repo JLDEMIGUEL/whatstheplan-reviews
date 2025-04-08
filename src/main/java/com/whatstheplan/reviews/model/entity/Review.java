@@ -26,5 +26,7 @@ public class Review {
     private UUID userId;
     private Integer rating;
     private String text;
+
+    @Builder.Default
     private Instant createdAt = now();
 }

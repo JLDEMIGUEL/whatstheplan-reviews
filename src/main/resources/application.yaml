@@ -23,6 +23,9 @@ spring:
       uri: ${MONGO_DB_URL}
       database: whatsThePlan
 
+user-service:
+  url: ${USER_SERVICE_URL}
+
 management:
   endpoints:
     web:
