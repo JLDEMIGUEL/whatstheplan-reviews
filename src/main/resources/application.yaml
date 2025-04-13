@@ -22,6 +22,14 @@ spring:
     mongodb:
       uri: ${MONGO_DB_URL}
       database: whatsThePlan
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+      timeout: 6000
+  cache:
+    type: redis
+
 
 user-service:
   url: ${USER_SERVICE_URL}

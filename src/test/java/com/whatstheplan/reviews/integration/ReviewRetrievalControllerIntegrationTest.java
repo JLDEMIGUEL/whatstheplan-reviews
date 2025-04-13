@@ -1,5 +1,6 @@
 package com.whatstheplan.reviews.integration;
 
+import com.whatstheplan.reviews.client.user.response.BasicUserResponse;
 import com.whatstheplan.reviews.model.entity.Review;
 import com.whatstheplan.reviews.model.response.ErrorResponse;
 import com.whatstheplan.reviews.model.response.ReviewResponse;
@@ -11,13 +12,19 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.whatstheplan.reviews.testconfig.utils.AssertionsUtils.assertReviewResponse;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.OTHER_RATER_ID;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.OTHER_RATER_USERNAME;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_ID;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.RATER_USERNAME;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.USERNAME;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.USER_ID;
+import static com.whatstheplan.reviews.testconfig.utils.DataUtils.generateBasicUserResponse;
 import static com.whatstheplan.reviews.testconfig.utils.DataUtils.generateReviewEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,6 +49,40 @@ class ReviewRetrievalControllerIntegrationTest extends BaseIntegrationTest {
         // then
         ReviewResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ReviewResponse.class);
         assertReviewResponse(review, response, isOwned, username);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestValues")
+    void whenRetrievingExistingReviewById_thenFirstCallShouldHitServiceAndNextFromCache(
+            UUID raterId, String username) {
+        // given
+        Review review = reviewRepository.save(generateReviewEntity(raterId));
+
+        // when
+        IntStream.range(0, 3).forEach(i -> {
+            try {
+                mockMvc.perform(get("/reviews/{id}", review.getId())
+                                .with(JWT_TOKEN)
+                                .contentType(APPLICATION_JSON_VALUE))
+                        .andExpect(status().isOk());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // then
+        userWireMockExtension.verify(1,
+                getRequestedFor(urlEqualTo("/users-info/" + raterId)));
+        userWireMockExtension.verify(1,
+                getRequestedFor(urlEqualTo("/users-info/" + USER_ID)));
+        
+        BasicUserResponse userCache = userCacheManager.getCache("userBasicInfoCache")
+                .get(USER_ID, BasicUserResponse.class);
+        assertThat(userCache).isEqualTo(generateBasicUserResponse(USERNAME));
+
+        BasicUserResponse raterCache = userCacheManager.getCache("userBasicInfoCache")
+                .get(raterId, BasicUserResponse.class);
+        assertThat(raterCache).isEqualTo(generateBasicUserResponse(username));
     }
 
     @Test

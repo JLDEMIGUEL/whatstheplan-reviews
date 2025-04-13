@@ -2,6 +2,7 @@ package com.whatstheplan.reviews.testconfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whatstheplan.reviews.repository.ReviewRepository;
+import com.whatstheplan.reviews.testconfig.redis.EmbeddedRedisConfig;
 import com.whatstheplan.reviews.testconfig.wiremock.AuthWireMockExtension;
 import com.whatstheplan.reviews.testconfig.wiremock.UserWireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,6 +28,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(EmbeddedRedisConfig.class)
 public class BaseIntegrationTest {
 
     @Autowired
@@ -33,6 +37,9 @@ public class BaseIntegrationTest {
     protected ReviewRepository reviewRepository;
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected CacheManager userCacheManager;
 
     @RegisterExtension
     protected static UserWireMockExtension userWireMockExtension = new UserWireMockExtension();
@@ -50,6 +57,7 @@ public class BaseIntegrationTest {
         userWireMockExtension.stubForUser(USER_ID, USERNAME);
         userWireMockExtension.stubForUser(RATER_ID, RATER_USERNAME);
         userWireMockExtension.stubForUser(OTHER_RATER_ID, OTHER_RATER_USERNAME);
+        userCacheManager.getCache("userBasicInfoCache").clear();
     }
 
 }

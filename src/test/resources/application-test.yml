@@ -12,6 +12,11 @@ spring:
         provider:
           cognito:
             token-uri: http://localhost:8091/oauth2/token
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""
 
 de:
   flapdoodle:
