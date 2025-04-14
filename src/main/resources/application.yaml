@@ -32,7 +32,7 @@ spring:
 
 
 user-service:
-  url: ${USER_SERVICE_URL}
+  url: http://users:8080
 
 management:
   endpoints:
