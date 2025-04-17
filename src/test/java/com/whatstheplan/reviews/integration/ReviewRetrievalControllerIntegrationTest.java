@@ -75,12 +75,12 @@ class ReviewRetrievalControllerIntegrationTest extends BaseIntegrationTest {
                 getRequestedFor(urlEqualTo("/users-info/" + raterId)));
         userWireMockExtension.verify(1,
                 getRequestedFor(urlEqualTo("/users-info/" + USER_ID)));
-        
-        BasicUserResponse userCache = userCacheManager.getCache("userBasicInfoCache")
+
+        BasicUserResponse userCache = userCacheManager.getCache("userBasicInfoReviewCache")
                 .get(USER_ID, BasicUserResponse.class);
         assertThat(userCache).isEqualTo(generateBasicUserResponse(USERNAME));
 
-        BasicUserResponse raterCache = userCacheManager.getCache("userBasicInfoCache")
+        BasicUserResponse raterCache = userCacheManager.getCache("userBasicInfoReviewCache")
                 .get(raterId, BasicUserResponse.class);
         assertThat(raterCache).isEqualTo(generateBasicUserResponse(username));
     }

@@ -17,7 +17,7 @@ public class UserClient {
 
     private final WebClient webClient;
 
-    @Cacheable(value = "userBasicInfoCache", key = "#userId", cacheManager = "userCacheManager")
+    @Cacheable(value = "userBasicInfoReviewCache", key = "#userId", cacheManager = "userCacheManager")
     public BasicUserResponse getUserBasicInfo(UUID userId) {
         log.info("Retrieving username for userId: {}", userId);
         return webClient.get()

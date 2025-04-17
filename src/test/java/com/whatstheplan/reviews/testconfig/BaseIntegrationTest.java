@@ -57,7 +57,7 @@ public class BaseIntegrationTest {
         userWireMockExtension.stubForUser(USER_ID, USERNAME);
         userWireMockExtension.stubForUser(RATER_ID, RATER_USERNAME);
         userWireMockExtension.stubForUser(OTHER_RATER_ID, OTHER_RATER_USERNAME);
-        userCacheManager.getCache("userBasicInfoCache").clear();
+        userCacheManager.getCache("userBasicInfoReviewCache").clear();
     }
 
 }

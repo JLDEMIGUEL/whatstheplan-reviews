@@ -15,16 +15,18 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfig {
 
+    public static final Duration CACHE_TTL = Duration.ofMinutes(1);
+
     @Bean
     public RedisCacheManager userCacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
+                .entryTtl(CACHE_TTL)
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.
                         fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)
-                .withCacheConfiguration("userBasicInfoCache", config)
+                .withCacheConfiguration("userBasicInfoReviewCache", config)
                 .build();
     }
 }
