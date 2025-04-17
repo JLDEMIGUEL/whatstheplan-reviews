@@ -94,7 +94,7 @@ class ReviewDeletionControllerIntegrationTest extends BaseIntegrationTest {
         // when
         mockMvc.perform(delete("/reviews/{id}", randomId)
                         .contentType(APPLICATION_JSON_VALUE))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
         // then
         assertThat(reviewRepository.count()).isEqualTo(0);

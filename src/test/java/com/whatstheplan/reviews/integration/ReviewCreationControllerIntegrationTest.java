@@ -89,7 +89,7 @@ class ReviewCreationControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/reviews")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(reviewRequest)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
         // then
         assertThat(reviewRepository.count()).isEqualTo(0);
