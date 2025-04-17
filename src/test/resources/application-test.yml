@@ -16,7 +16,10 @@ spring:
     redis:
       host: localhost
       port: 6379
+      username: ""
       password: ""
+      ssl:
+        enabled: false
 
 de:
   flapdoodle:
